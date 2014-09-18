@@ -25,7 +25,12 @@
   "keywords": [
     "compute.io",
     "compute",
-    "computation"
+    "computation",
+    "statistics",
+    "stats",
+    "erf",
+    "inverse error function",
+    "error function"
   ],
   "bugs": {
     "url": "https://github.com/compute-io/erfinv/issues"

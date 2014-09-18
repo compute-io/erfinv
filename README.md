@@ -19,14 +19,30 @@ For use in the browser, use [browserify](https://github.com/substack/node-browse
 To use the module,
 
 ``` javascript
-var lib = require( 'compute-erfinv' );
+var erfinv = require( 'compute-erfinv' );
+```
+
+The method accepts a single argument: either a single `numeric` value or an `array` of numeric values, which may include `NaN`, `+infinity`, and `-infinity`. For an input `array`, the inverse error function is evaluated for each value.
+
+``` javascript
+erfinv( 0.5 );
+erfinv( [ 0, 0.2, 0.5, 0.8, 1 ] );
 ```
 
 
 ## Examples
 
 ``` javascript
-var lib = require( 'compute-erfinv' );
+// Simulate some data...
+var data = new Array( 100 );
+
+for ( var i = 0; i < data.length; i++ ) {
+	data[ i ] = Math.random();
+}
+
+// Evaluate the inverse error function for each datum:
+console.log( erfinv( data ) );
+// returns [...]
 ```
 
 To run the example code from the top-level application directory,
