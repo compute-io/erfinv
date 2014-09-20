@@ -22,7 +22,7 @@ To use the module,
 var erfinv = require( 'compute-erfinv' );
 ```
 
-The method accepts a single argument: either a single `numeric` value or an `array` of numeric values, which may include `NaN`, `+infinity`, and `-infinity`. For an input `array`, the inverse error function is evaluated for each value.
+The method accepts a single argument: either a single `numeric` value or an `array` of numeric values. A value must reside on the interval `[-1,1]`. For an input `array`, the inverse error function is evaluated for each value.
 
 ``` javascript
 erfinv( 0.5 );
