@@ -72,38 +72,47 @@ describe( 'compute-erfinv', function tests() {
 		assert.ok( val !== val );
 	});
 
-	it( 'should return 1 if provided positive infinity', function test() {
-		var inf = Number.POSITIVE_INFINITY,
-			val = erfinv( inf );
-		assert.strictEqual( val, 1 );
+	it( 'should throw an error if provided a value not on the interval [-1,1]', function test() {
+		var values = [
+				-2,
+				2
+			];
+
+			for ( var i = 0; i < values.length; i++ ) {
+				expect( badValue( values[i] ) ).to.throw( Error );
+			}
+
+			function badValue( value ) {
+				return function() {
+					erfinv( value );
+				};
+			}
 	});
 
-	it( 'should return -1 if provided negative infinity', function test() {
+	it( 'should return positive infinity if provided 1', function test() {
+		var inf = Number.POSITIVE_INFINITY,
+			val = erfinv( 1 );
+		assert.strictEqual( val, inf );
+	});
+
+	it( 'should return negative infinity provided -1', function test() {
 		var ninf = Number.NEGATIVE_INFINITY,
-			val = erfinv( ninf );
-		assert.strictEqual( val, -1 );
+			val = erfinv( -1 );
+		assert.strictEqual( val, ninf );
+	});
+
+	it( 'should return 0 if provided 0', function test() {
+		assert.strictEqual( erfinv( 0 ), 0 );
 	});
 
 	it( 'should return a numeric value if provided a numeric value', function test() {
-		assert.isNumber( erfinv( 1 ) );
+		assert.isNumber( erfinv( 0.5 ) );
 	});
 
 	it( 'should return an array of numbers if provided an array', function test() {
 		var values = [
-				1e-306,
-				-1e-306,
-				1e-299,
-				-1e-299,
-				0.8,
-				-0.8,
-				1,
-				-1,
-				10,
-				-10,
-				2,
-				-2,
-				3,
-				-3
+				0.2,
+				0.3
 			],
 			val;
 
@@ -118,44 +127,40 @@ describe( 'compute-erfinv', function tests() {
 		var values, expected, actual;
 
 		values = [
-			1e-306,
-			-1e-306,
-			1e-299,
-			-1e-299,
+			0.25,
+			-0.25,
+			0.6,
+			-0.6,
 			0.8,
 			-0.8,
-			1,
-			-1,
-			10,
-			-10,
-			2,
-			-2,
-			3,
-			-3
+			0.999,
+			-0.999,
+			0.9999,
+			-0.9999,
+			9.999999999999999e-1,
+			-9.999999999999999e-1
 		];
 
-		// Evaluated on Wolfram Alpha:
+		// Evaluated on Wolfram Alpha and Octave:
 		expected = [
-			1.128379e-300,
-			-1.128379e-300,
-			1.128379e-299,
-			-1.128379e-299,
-			0.742101,
-			-0.742101,
-			0.84270079,
-			-0.84270079,
-			0.999999999,
-			-0.999999999,
-			0.995322265,
-			-0.995322265,
-			0.9999779095,
-			-0.9999779095
+			0.225312,
+			-0.225312,
+			0.595116,
+			-0.595116,
+			0.906194,
+			-0.906194,
+			2.32675,
+			-2.32675,
+			2.75106,
+			-2.75106,
+			5.8636, // Octave
+			-5.8636 // Octave
 		];
 
 		actual = erfinv( values );
 
 		for ( var i = 0; i < actual.length; i++ ) {
-			assert.closeTo( actual[ i ], expected[ i ], 1e-7 );
+			assert.closeTo( actual[ i ], expected[ i ], 1e-4 );
 		}
 	});
 
