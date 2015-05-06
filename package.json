@@ -39,7 +39,7 @@
     "url": "https://github.com/compute-io/erfinv/issues"
   },
   "dependencies": {
-    "compute-polynomial": "^1.0.0",
+    "compute-polynomial": "^1.1.0",
     "compute-reverse": "^1.1.0",
     "validate.io-array": "^1.0.3",
     "validate.io-boolean-primitive": "^1.0.0",
