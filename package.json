@@ -40,11 +40,11 @@
   },
   "dependencies": {
     "compute-polynomial": "^1.0.0",
+    "compute-reverse": "^1.1.0",
     "validate.io-array": "^1.0.3",
     "validate.io-boolean-primitive": "^1.0.0",
     "validate.io-function": "^1.0.2",
     "validate.io-object": "^1.0.3"
-
   },
   "devDependencies": {
     "chai": "2.x.x",
