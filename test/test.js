@@ -62,7 +62,7 @@ describe( 'compute-erfinv', function tests() {
 		}
 		function badValue( value ) {
 			return function() {
-				erfinv( [1,2,3], value );
+				erfinv( [-1,0,1], value );
 			};
 		}
 	});
@@ -85,7 +85,7 @@ describe( 'compute-erfinv', function tests() {
 		}
 		function badValue( value ) {
 			return function() {
-				erfinv( [1,2,3], {
+				erfinv( [-1,0,1], {
 					'copy': value
 				});
 			};
@@ -109,7 +109,7 @@ describe( 'compute-erfinv', function tests() {
 		}
 		function badValue( value ) {
 			return function() {
-				erfinv( [1,2,3], {
+				erfinv( [-1,0,1], {
 					'accessor': value
 				});
 			};
