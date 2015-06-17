@@ -6,8 +6,14 @@
 var // Expectation library:
 	chai = require( 'chai' ),
 
+	// Matrix data structure:
+	matrix = require( 'dstructs-matrix' ),
+
 	// Module to be tested:
-	erfinv = require( './../lib' );
+	erfinv = require( './../lib' ),
+
+	// Error function:
+	ERFINV = require( './../lib/number.js' );
 
 
 // VARIABLES //
@@ -24,15 +30,15 @@ describe( 'compute-erfinv', function tests() {
 		expect( erfinv ).to.be.a( 'function' );
 	});
 
-	it( 'should throw an error if not provided a numeric value or an array', function test() {
+	it( 'should throw an error if the first argument is neither a number or array-like or matrix-like', function test() {
 		var values = [
-			'5',
-			new Number( 0.5 ),
+			// '5', // valid as is array-like (length)
 			true,
 			undefined,
 			null,
-			{},
-			function(){}
+			NaN,
+			function(){},
+			{}
 		];
 
 		for ( var i = 0; i < values.length; i++ ) {
@@ -45,54 +51,7 @@ describe( 'compute-erfinv', function tests() {
 		}
 	});
 
-	it( 'should throw an error if provided an options argument which is not an object', function test() {
-		var values = [
-			'5',
-			5,
-			true,
-			undefined,
-			null,
-			NaN,
-			[],
-			function(){}
-		];
-
-		for ( var i = 0; i < values.length; i++ ) {
-			expect( badValue( values[i] ) ).to.throw( TypeError );
-		}
-		function badValue( value ) {
-			return function() {
-				erfinv( [-1,0,1], value );
-			};
-		}
-	});
-
-	it( 'should throw an error if provided a copy option which is not a boolean primitive', function test() {
-		var values = [
-			'5',
-			5,
-			new Boolean( true ),
-			undefined,
-			null,
-			NaN,
-			[],
-			{},
-			function(){}
-		];
-
-		for ( var i = 0; i < values.length; i++ ) {
-			expect( badValue( values[i] ) ).to.throw( TypeError );
-		}
-		function badValue( value ) {
-			return function() {
-				erfinv( [-1,0,1], {
-					'copy': value
-				});
-			};
-		}
-	});
-
-	it( 'should throw an error if provided an accessor option which is not a function', function test() {
+	it( 'should throw an error if provided an invalid option', function test() {
 		var values = [
 			'5',
 			5,
@@ -109,153 +68,58 @@ describe( 'compute-erfinv', function tests() {
 		}
 		function badValue( value ) {
 			return function() {
-				erfinv( [-1,0,1], {
+				erfinv( [1,2,3], {
 					'accessor': value
 				});
 			};
 		}
 	});
 
-	it( 'should throw an error if an input array contains non-numeric values (if not provided an accessor)', function test() {
+	it( 'should throw an error if provided an array and an unrecognized/unsupported data type option', function test() {
 		var values = [
-			'5',
-			new Number( 0.5 ),
-			true,
-			undefined,
-			null,
-			[],
-			{},
-			function(){}
+			'beep',
+			'boop'
 		];
 
 		for ( var i = 0; i < values.length; i++ ) {
-			expect( badValue( [ values[i] ] ) ).to.throw( TypeError );
+			expect( badValue( values[i] ) ).to.throw( Error );
 		}
 		function badValue( value ) {
 			return function() {
-				erfinv( value );
-			};
-		}
-	});
-
-	it( 'should throw an error if an accessed array value is not numeric', function test() {
-		var values = [
-			'5',
-			new Number( 5 ),
-			true,
-			undefined,
-			null,
-			NaN,
-			[],
-			{},
-			function(){}
-		];
-
-		for ( var i = 0; i < values.length; i++ ) {
-			expect( badValue( [ values[i] ] ) ).to.throw( TypeError );
-		}
-		function badValue( value ) {
-			return function() {
-				var arr = [
-					{'x': value}
-				];
-				erfinv( arr, {
-					'accessor': getValue
+				erfinv( [1,2,3], {
+					'dtype': value
 				});
 			};
 		}
-		function getValue( d ) {
-			return d.x;
-		}
 	});
 
-	it( 'should return NaN if provided a NaN', function test() {
-		var val = erfinv( NaN );
-		assert.isNumber( val );
-		assert.ok( val !== val );
-	});
-
-	it( 'should throw an error if provided a value not on the interval [-1,1]', function test() {
+	it( 'should throw an error if provided a matrix and an unrecognized/unsupported data type option', function test() {
 		var values = [
-			-2,
-			2
+			'beep',
+			'boop'
 		];
 
 		for ( var i = 0; i < values.length; i++ ) {
-			expect( badValue( values[i] ) ).to.throw( RangeError );
+			expect( badValue( values[i] ) ).to.throw( Error );
 		}
 		function badValue( value ) {
 			return function() {
-				erfinv( value );
+				erfinv( matrix( [2,2] ), {
+					'dtype': value
+				});
 			};
 		}
 	});
 
-	it( 'should return positive infinity if provided 1', function test() {
-		var inf = Number.POSITIVE_INFINITY,
-			val = erfinv( 1 );
-		assert.strictEqual( val, inf );
-	});
-
-	it( 'should return negative infinity provided -1', function test() {
-		var ninf = Number.NEGATIVE_INFINITY,
-			val = erfinv( -1 );
-		assert.strictEqual( val, ninf );
-	});
-
-	it( 'should return 0 if provided 0', function test() {
+	it( 'should compute the error function when provided a number', function test() {
 		assert.strictEqual( erfinv( 0 ), 0 );
+		assert.closeTo( erfinv( 0.5 ), 0.4769, 1e-4 );
 	});
 
-	it( 'should return a numeric value if provided a numeric value', function test() {
-		assert.isNumber( erfinv( 0.5 ) );
-	});
+	it( 'should evaluate the error function when provided a plain array', function test() {
+		var data, actual, expected, i;
 
-	it( 'should return an array of numbers if provided an array', function test() {
-		var values, out;
-
-		values = [
-			0.2,
-			0.3
-		];
-
-		out = erfinv( values );
-		assert.isArray( out );
-		for ( var i = 0; i < values.length; i++ ) {
-			assert.isNumber( out[ i ] );
-		}
-	});
-
-	it( 'should not mutate the input array by default', function test() {
-		var values, out;
-
-		values = [
-			0.2,
-			0.3
-		];
-
-		out = erfinv( values );
-		assert.ok( out !== values );
-	});
-
-	it( 'should mutate an input array if the `copy` option is `false`', function test() {
-		var values, out;
-
-		values = [
-			0.2,
-			0.3
-		];
-
-		out = erfinv( values, {
-			'copy': false
-		});
-		assert.ok( out === values );
-	});
-
-	it( 'should evaluate the inverse error function', function test() {
-		var values, expected, actual;
-
-		values = [
+		data = [
 			0.25,
 			-0.25,
 			0.6,
@@ -286,17 +150,105 @@ describe( 'compute-erfinv', function tests() {
 			-5.8636 // Octave
 		];
 
-		actual = erfinv( values );
+		actual = erfinv( data );
+		assert.notEqual( actual, data );
 
-		for ( var i = 0; i < actual.length; i++ ) {
+		for ( i = 0; i < actual.length; i++ ) {
 			assert.closeTo( actual[ i ], expected[ i ], 1e-4 );
+		}
+
+		// Mutate...
+		actual = erfinv( data, {
+			'copy': false
+		});
+		assert.strictEqual( actual, data );
+
+		for ( i = 0; i < actual.length; i++ ) {
+			assert.closeTo( data[ i ], expected[ i ], 1e-4 );
 		}
 	});
 
-	it( 'should evaluate the inverse error function using an accessor function', function test() {
-		var values, expected, actual;
+	it( 'should evaluate the error function when provided a typed array', function test() {
+		var data, actual, expected, i;
 
-		values = [
+		data = new Float64Array( [
+				0.25,
+				-0.25,
+				0.6,
+				-0.6,
+				0.8,
+				-0.8,
+				0.999,
+				-0.999,
+				0.9999,
+				-0.9999,
+				9.999999999999999e-1,
+				-9.999999999999999e-1
+			]);
+
+		expected = new Float64Array( [
+			0.225312,
+			-0.225312,
+			0.595116,
+			-0.595116,
+			0.906194,
+			-0.906194,
+			2.32675,
+			-2.32675,
+			2.75106,
+			-2.75106,
+			5.8636,
+			-5.8636
+		]);
+
+		actual = erfinv( data );
+		assert.notEqual( actual, data );
+
+		for ( i = 0; i < actual.length; i++ ) {
+			assert.closeTo( actual[ i ], expected[ i ], 1e-4 );
+		}
+
+		// Mutate:
+		actual = erfinv( data, {
+			'copy': false
+		});
+		assert.strictEqual( actual, data );
+
+		for ( i = 0; i < actual.length; i++ ) {
+			assert.closeTo( data[ i ], expected[ i ], 1e-4 );
+		}
+	});
+
+	it( 'should evaluate the inverse error function element-wise and return an array of a specific type', function test() {
+		var data, actual, expected;
+
+		data = [
+			0.25,
+			-0.25,
+			0.6,
+			-0.6,
+			0.8,
+			-0.8,
+			0.999,
+			-0.999,
+			0.9999,
+			-0.9999,
+			9.999999999999999e-1,
+			-9.999999999999999e-1
+		];
+		expected = new Int8Array( [ 0, 0, 0, 0, 0, 0, 2, -2, 2, -2, 5, -5 ] );
+
+		actual = erfinv( data, {
+			'dtype': 'int8'
+		});
+		assert.notEqual( actual, data );
+		assert.deepEqual( actual, expected );
+	});
+
+	it( 'should evaluate the error function element-wise using an accessor', function test() {
+		var data, actual, expected, i;
+
+		data = [
 			[1,0.25],
 			[2,-0.25],
 			[3,0.6],
@@ -327,16 +279,155 @@ describe( 'compute-erfinv', function tests() {
 			-5.8636 // Octave
 		];
 
-		actual = erfinv( values, {
+		actual = erfinv( data, {
 			'accessor': getValue
 		});
+		assert.notEqual( actual, data );
 
-		for ( var i = 0; i < actual.length; i++ ) {
+		for ( i = 0; i < actual.length; i++ ) {
 			assert.closeTo( actual[ i ], expected[ i ], 1e-4 );
 		}
+
+		// Mutate:
+		actual = erfinv( data, {
+			'accessor': getValue,
+			'copy': false
+		});
+		assert.strictEqual( actual, data );
+
+		for ( i = 0; i < actual.length; i++ ) {
+			assert.closeTo( data[ i ], expected[ i ], 1e-4 );
+		}
+
 		function getValue( d ) {
 			return d[ 1 ];
 		}
+	});
+
+	it( 'should evaluate the error function element-wise and deep set', function test() {
+		var data, actual, expected, i;
+
+		data = [
+			{'x':[9,0.25]},
+			{'x':[9,-0.25]},
+			{'x':[9,0.6]},
+			{'x':[9,-0.6]},
+			{'x':[9,0.8]},
+			{'x':[9,-0.8]},
+			{'x':[9,0.999]},
+			{'x':[9,-0.999]},
+			{'x':[9,0.9999]},
+			{'x':[9,-0.9999]},
+			{'x':[9,9.999999999999999e-1]},
+			{'x':[9,-9.999999999999999e-1]}
+		];
+
+		expected = [
+			{'x':[9,0.225312]},
+			{'x':[9,-0.225312]},
+			{'x':[9,0.595116]},
+			{'x':[9,-0.595116]},
+			{'x':[9,0.906194]},
+			{'x':[9,-0.906194]},
+			{'x':[9,2.32675]},
+			{'x':[9,-2.32675]},
+			{'x':[9,2.75106]},
+			{'x':[9,-2.75106]},
+			{'x':[9,5.8636]}, // Octave
+			{'x':[9,-5.8636]}, // Octave
+		];
+
+		actual = erfinv( data, {
+			'path': 'x.1'
+		});
+
+		assert.strictEqual( actual, data );
+
+		for ( i = 0; i < actual.length; i++ ) {
+			assert.closeTo( data[ i ].x[ 1 ], expected[ i ].x[ 1 ], 1e-4 );
+		}
+
+
+		// Specify a path with a custom separator...
+
+		data = [
+			{'x':[9,0.25]},
+			{'x':[9,-0.25]},
+			{'x':[9,0.6]},
+			{'x':[9,-0.6]},
+			{'x':[9,0.8]},
+			{'x':[9,-0.8]},
+			{'x':[9,0.999]},
+			{'x':[9,-0.999]},
+			{'x':[9,0.9999]},
+			{'x':[9,-0.9999]},
+			{'x':[9,9.999999999999999e-1]},
+			{'x':[9,-9.999999999999999e-1]}
+		];
+		actual = erfinv( data, {
+			'path': 'x/1',
+			'sep': '/'
+		});
+		assert.strictEqual( actual, data );
+
+		for ( i = 0; i < actual.length; i++ ) {
+			assert.closeTo( actual[ i ].x[ 1 ], expected[ i ].x[ 1 ], 1e-4 );
+		}
+
+	});
+
+	it( 'should evaluate the error function element-wise when provided a matrix', function test() {
+		var mat,
+			out,
+			d1,
+			d2,
+			i;
+
+		d1 = new Float64Array( 25 );
+		d2 = new Float64Array( 25 );
+		for ( i = 0; i < d1.length; i++ ) {
+			d1[ i ] = Math.random();
+			d2[ i ] = ERFINV( d1[ i ] );
+		}
+		mat = matrix( d1, [5,5], 'float64' );
+		out = erfinv( mat );
+
+		assert.deepEqual( out.data, d2 );
+
+		// Mutate...
+		out = erfinv( mat, {
+			'copy': false
+		});
+		assert.strictEqual( mat, out );
+		assert.deepEqual( mat.data, d2 );
+	});
+
+	it( 'should evaluate the error function element-wise and return a matrix of a specific type', function test() {
+		var mat,
+			out,
+			d1,
+			d2,
+			i;
+
+		d1 = new Float64Array( 25 );
+		d2 = new Float32Array( 25 );
+		for ( i = 0; i < d1.length; i++ ) {
+			d1[ i ] = Math.random();
+			d2[ i ] = ERFINV( d1[ i ] );
+		}
+		mat = matrix( d1, [5,5], 'float64' );
+		out = erfinv( mat, {
+			'dtype': 'float32'
+		});
+
+		assert.strictEqual( out.dtype, 'float32' );
+		assert.deepEqual( out.data, d2 );
+	});
+
+	it( 'should return `null` if provided an empty data structure', function test() {
+		assert.isNull( erfinv( [] ) );
+		assert.isNull( erfinv( matrix( [0,0] ) ) );
+		assert.isNull( erfinv( new Int8Array() ) );
 	});
 
 });
