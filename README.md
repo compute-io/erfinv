@@ -2,7 +2,7 @@ erfinv
 ===
 [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Dependencies][dependencies-image]][dependencies-url]
 
-> Inverse error function.
+> [Inverse error function](https://en.wikipedia.org/wiki/Error_function#Inverse_functions). 
 
 The [inverse error function](https://en.wikipedia.org/wiki/Error_function#Inverse_functions) is defined in terms of the Maclaurin series
 
@@ -38,7 +38,7 @@ var erfinv = require( 'compute-erfinv' );
 
 #### erfinv( x[, options] )
 
-Evaluates the [inverse error function](http://en.wikipedia.org/wiki/Error_function).
+Evaluates the [inverse error function](https://en.wikipedia.org/wiki/Error_function#Inverse_functions).
 `x` may be either a [`number`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), an [`array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), a [`typed array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays), or a [`matrix`](https://github.com/dstructs/matrix).
 A value __must__ reside on the interval `[-1,1]`. For an input `array` and `matrix`, the `erf` function is evaluated for each value.
 
@@ -144,13 +144,13 @@ var data, out;
 
 data = new float64Array( [0, 0.25, 0.5] );
 
-out = erf( data, {
+out = erfinv( data, {
 	'dtype': 'int32'
 });
 // returns Int32Array( [0,0,0] )
 
 // Works for plain arrays, as well...
-out = erf( [0, 0.25, 0.5], {
+out = erfinv( [0, 0.25, 0.5], {
 	'dtype': 'uint8'
 });
 // returns Uint8Array( [0,0,0] )
@@ -167,7 +167,7 @@ var data,
 
 var data = [ 0, 0.2, 0.5, 0.8, 1 ];
 
-var out = erf( data, {
+var out = erfinv( data, {
 	'copy': false
 });
 // returns [ 0, 0.17914, 0.47694, 0.90619, +infinity ]
@@ -185,7 +185,7 @@ mat = matrix( data, [2,2], 'float64' );
 	   0.5  0.75 ]
 */
 
-out = erf( mat, {
+out = erfinv( mat, {
 	'copy': false
 });
 /*
