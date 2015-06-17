@@ -4,11 +4,19 @@ erfinv
 
 > Inverse error function.
 
-The [error function](https://en.wikipedia.org/wiki/Error_function) is defined as
+The [inverse error function](https://en.wikipedia.org/wiki/Error_function#Inverse_functions) is defined in terms of the Maclaurin series
 
 <div class="equation" align="center" data-raw-text="
-    \operatorname{erf}(x) = \frac{2}{\sqrt\pi}\int_0^x e^{-t^2}\,\mathrm dt." data-equation="eq:inverse_error_function">
+    \operatorname{erf}^{-1}(z)=\sum_{k=0}^\infty\frac{c_k}{2k+1}\left (\frac{\sqrt{\pi}}{2}z\right )^{2k+1}, \,\!" data-equation="eq:inverse_error_function">
 	<img src="" alt="Equation of the inverse error function.">
+	<br>
+</div>
+
+where `c_0 = 1` and 
+
+<div class="equation" align="center" data-raw-text="
+    c_k=\sum_{m=0}^{k-1}\frac{c_m c_{k-1-m}}{(m+1)(2m+1)} = \left\{1,1,\frac{7}{6},\frac{127}{90},\frac{4369}{2520},\frac{34807}{16200},\ldots\right\}." data-equation="eq:series_coefficients">
+	<img src="" alt="Equation of the coefficients.">
 	<br>
 </div>
 
