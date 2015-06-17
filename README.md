@@ -4,6 +4,13 @@ erfinv
 
 > Inverse error function.
 
+The [error function](https://en.wikipedia.org/wiki/Error_function) is defined as
+
+<div class="equation" align="center" data-raw-text="
+    \operatorname{erf}(x) = \frac{2}{\sqrt\pi}\int_0^x e^{-t^2}\,\mathrm dt." data-equation="eq:inverse_error_function">
+	<img src="" alt="Equation of the inverse error function.">
+	<br>
+</div>
 
 ## Installation
 
@@ -23,34 +30,55 @@ var erfinv = require( 'compute-erfinv' );
 
 #### erfinv( x[, options] )
 
-Evaluates the [inverse error function](http://en.wikipedia.org/wiki/Error_function). The function accepts as its first argument either a single `numeric` value or an `array` of numeric values. A value __must__ reside on the interval `[-1,1]`. For an input `array`, the inverse error function is evaluated for each value.
+Evaluates the [inverse error function](http://en.wikipedia.org/wiki/Error_function).
+`x` may be either a [`number`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), an [`array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), a [`typed array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays), or a [`matrix`](https://github.com/dstructs/matrix).
+A value __must__ reside on the interval `[-1,1]`. For an input `array` and `matrix`, the `erf` function is evaluated for each value.
 
 ``` javascript
-erfinv( 0.5 );
+var matrix = require( 'dstructs-matrix' ),
+	data,
+	mat,
+	out,
+	i;
+
+out = erfinv( 0.5 );
 // returns ~0.47694
 
-erfinv( [ 0, 0.2, 0.5, 0.8, 1 ] );
-// returns [ 0, 0.17914, 0.47694, 0.90619, +infinity ]
-```
-
-When provided an input `array`, the function accepts two `options`:
-
-*  __copy__: `boolean` indicating whether to return a new `array` containing the `erfinv` values. Default: `true`.
-*  __accessor__: accessor `function` for accessing numeric values in object `arrays`.
-
-To mutate the input `array` (e.g., when input values can be discarded or when optimizing memory usage), set the `copy` option to `false`.
-
-``` javascript
-var arr = [ 0, 0.2, 0.5, 0.8, 1 ];
-
-var vals = erfinv( arr, {
-	'copy': false
-});
+out = erfinv( [ 0, 0.2, 0.5, 0.8, 1 ] );
 // returns [ 0, 0.17914, 0.47694, 0.90619, +infinity ]
 
-console.log( arr === vals );
-// returns true
+data = [ 0, 0.5, 1 ];
+out = erfinv( data );
+// returns [ 0, 0.47694, +infinity ]
+
+data = new Float32Array( data );
+out = erfinv( data );
+// returns Float64Array(  [ 0, 0.47694, +infinity ] )
+
+data = new Float64Array( 4 );
+for ( i = 0; i < 4; i++ ) {
+	data[ i ] = i / 2;
+}
+mat = matrix( data, [2,2], 'float64' );
+/*
+	[  0    0.25
+	   0.5  0.75 ]
+*/
+
+out = erfinv( mat );
+/*
+	[  0    ~02253
+	  ~0.4769 ~0.8134 ]
+*/
 ```
+
+The function accepts the following `options`:
+
+* 	__accessor__: accessor `function` for accessing `array` values.
+* 	__dtype__: output [`typed array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays) or [`matrix`](https://github.com/dstructs/matrix) data type. Default: `float64`.
+*	__copy__: `boolean` indicating if the `function` should return a new data structure. Default: `true`.
+*	__path__: [deepget](https://github.com/kgryte/utils-deep-get)/[deepset](https://github.com/kgryte/utils-deep-set) key path.
+*	__sep__: [deepget](https://github.com/kgryte/utils-deep-get)/[deepset](https://github.com/kgryte/utils-deep-set) key path separator. Default: `'.'`.
 
 For object `arrays`, provide an accessor `function` for accessing `array` values.
 
@@ -75,21 +103,157 @@ var vals = erfinv( data, {
 
 __Note__: the function returns an `array` with a length equal to the original input `array`.
 
+To [deepset](https://github.com/kgryte/utils-deep-set) an object `array`, provide a key path and, optionally, a key path separator.
 
+``` javascript
+var data = [
+	{'x':[0,0]},
+	{'x':[1,0.25]},
+	{'x':[2,0.5]},
+	{'x':[3,0.75]},
+	{'x':[4,1]}
+];
 
+var out = erfinv( data, 'x|1', '|' );
+/*
+	[
+		{'x':[0,0]},
+		{'x':[1,0.2253]},
+		{'x':[2,0.4769]},
+		{'x':[3,0.8134]},
+		{'x':[4,+infinity]}
+	]
+*/
+
+var bool = ( data === out );
+// returns true
+```
+
+By default, when provided a [`typed array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays) or [`matrix`](https://github.com/dstructs/matrix), the output data structure is `float64` in order to preserve precision. To specify a different data type, set the `dtype` option (see [`matrix`](https://github.com/dstructs/matrix) for a list of acceptable data types).
+
+``` javascript
+var data, out;
+
+data = new float64Array( [0, 0.25, 0.5] );
+
+out = erf( data, {
+	'dtype': 'int32'
+});
+// returns Int32Array( [0,0,0] )
+
+// Works for plain arrays, as well...
+out = erf( [0, 0.25, 0.5], {
+	'dtype': 'uint8'
+});
+// returns Uint8Array( [0,0,0] )
+```
+
+By default, the function returns a new data structure. To mutate the input data structure (e.g., when input values can be discarded or when optimizing memory usage), set the `copy` option to `false`.
+
+``` javascript
+var data,
+	bool,
+	mat,
+	out,
+	i;
+
+var data = [ 0, 0.2, 0.5, 0.8, 1 ];
+
+var out = erf( data, {
+	'copy': false
+});
+// returns [ 0, 0.17914, 0.47694, 0.90619, +infinity ]
+
+bool = (arr === vals );
+// returns true
+
+data = new Float64Array( 4 );
+for ( i = 0; i < 4; i++ ) {
+	data[ i ] = i / 4;
+}
+mat = matrix( data, [2,2], 'float64' );
+/*
+	[  0    0.25
+	   0.5  0.75 ]
+*/
+
+out = erf( mat, {
+	'copy': false
+});
+/*
+	[  0    ~02253
+	  ~0.4769 ~0.8134 ]
+*/
+
+bool = ( mat === out );
+// returns true
+```
 
 ## Examples
 
 ``` javascript
-var erfinv = require( 'compute-erfinv' );
+var matrix = require( 'dstructs-matrix' ),
+	erfinv = require( 'compute-erfinv' );
 
-var data = new Array( 100 );
-for ( var i = 0; i < data.length; i++ ) {
+var data,
+	mat,
+	out,
+	tmp,
+	i;
+
+// Plain arrays...
+data = new Array( 100 );
+for ( i = 0; i < data.length; i++ ) {
 	data[ i ] = ( Math.random() - 0.5 ) * 2;
 }
+out = erfinv( data );
 
-console.log( erfinv( data ) );
-// returns [...]
+// Object arrays (accessors)...
+function getValue( d ) {
+	return d.x;
+}
+for ( i = 0; i < data.length; i++ ) {
+	data[ i ] = {
+		'x': data[ i ]
+	};
+}
+out = erfinv( data, {
+	'accessor': getValue
+});
+
+// Deep set arrays...
+for ( i = 0; i < data.length; i++ ) {
+	data[ i ] = {
+		'x': [ i, data[ i ].x ]
+	};
+}
+out = erfinv( data, {
+	'path': 'x/1',
+	'sep': '/'
+});
+
+// Typed arrays...
+data = new Int32Array( 10 );
+for ( i = 0; i < data.length; i++ ) {
+	data[ i ] = ( Math.random() - 0.5 ) * 2;
+}
+tmp = erfinv( data );
+out = '';
+for ( i = 0; i < data.length; i++ ) {
+	out += tmp[ i ];
+	if ( i < data.length-1 ) {
+		out += ',';
+	}
+}
+
+// Matrices...
+mat = matrix( data, [5,2], 'int32' );
+out = erfinv( mat );
+
+// Matrices (custom output data type)...
+out = erfinv( mat, {
+	'dtype': 'uint8'
+});
 ```
 
 To run the example code from the top-level application directory,
@@ -135,7 +299,7 @@ $ make view-cov
 
 ## Copyright
 
-Copyright &copy; 2014-2015. Athan Reines.
+Copyright &copy; 2014-2015. The [Compute.io](https://github.com/compute-io) Authors.
 
 
 [npm-image]: http://img.shields.io/npm/v/compute-erfinv.svg
