@@ -111,12 +111,12 @@ describe( 'compute-erfinv', function tests() {
 		}
 	});
 
-	it( 'should compute the error function when provided a number', function test() {
+	it( 'should compute the inverse error function when provided a number', function test() {
 		assert.strictEqual( erfinv( 0 ), 0 );
 		assert.closeTo( erfinv( 0.5 ), 0.4769, 1e-4 );
 	});
 
-	it( 'should evaluate the error function when provided a plain array', function test() {
+	it( 'should evaluate the inverse error function when provided a plain array', function test() {
 		var data, actual, expected, i;
 
 		data = [
@@ -168,23 +168,23 @@ describe( 'compute-erfinv', function tests() {
 		}
 	});
 
-	it( 'should evaluate the error function when provided a typed array', function test() {
+	it( 'should evaluate the inverse error function when provided a typed array', function test() {
 		var data, actual, expected, i;
 
 		data = new Float64Array( [
-				0.25,
-				-0.25,
-				0.6,
-				-0.6,
-				0.8,
-				-0.8,
-				0.999,
-				-0.999,
-				0.9999,
-				-0.9999,
-				9.999999999999999e-1,
-				-9.999999999999999e-1
-			]);
+			0.25,
+			-0.25,
+			0.6,
+			-0.6,
+			0.8,
+			-0.8,
+			0.999,
+			-0.999,
+			0.9999,
+			-0.9999,
+			9.999999999999999e-1,
+			-9.999999999999999e-1
+		]);
 
 		expected = new Float64Array( [
 			0.225312,
@@ -241,11 +241,13 @@ describe( 'compute-erfinv', function tests() {
 		actual = erfinv( data, {
 			'dtype': 'int8'
 		});
+
 		assert.notEqual( actual, data );
+		assert.strictEqual( actual.BYTES_PER_ELEMENT, 1 );
 		assert.deepEqual( actual, expected );
 	});
 
-	it( 'should evaluate the error function element-wise using an accessor', function test() {
+	it( 'should evaluate the inverse error function element-wise using an accessor', function test() {
 		var data, actual, expected, i;
 
 		data = [
@@ -298,13 +300,12 @@ describe( 'compute-erfinv', function tests() {
 		for ( i = 0; i < actual.length; i++ ) {
 			assert.closeTo( data[ i ], expected[ i ], 1e-4 );
 		}
-
 		function getValue( d ) {
 			return d[ 1 ];
 		}
 	});
 
-	it( 'should evaluate the error function element-wise and deep set', function test() {
+	it( 'should evaluate the inverse error function element-wise and deep set', function test() {
 		var data, actual, expected, i;
 
 		data = [
@@ -346,10 +347,7 @@ describe( 'compute-erfinv', function tests() {
 		for ( i = 0; i < actual.length; i++ ) {
 			assert.closeTo( data[ i ].x[ 1 ], expected[ i ].x[ 1 ], 1e-4 );
 		}
-
-
 		// Specify a path with a custom separator...
-
 		data = [
 			{'x':[9,0.25]},
 			{'x':[9,-0.25]},
@@ -376,7 +374,7 @@ describe( 'compute-erfinv', function tests() {
 
 	});
 
-	it( 'should evaluate the error function element-wise when provided a matrix', function test() {
+	it( 'should evaluate the inverse error function element-wise when provided a matrix', function test() {
 		var mat,
 			out,
 			d1,
@@ -402,7 +400,7 @@ describe( 'compute-erfinv', function tests() {
 		assert.deepEqual( mat.data, d2 );
 	});
 
-	it( 'should evaluate the error function element-wise and return a matrix of a specific type', function test() {
+	it( 'should evaluate the inverse error function element-wise and return a matrix of a specific type', function test() {
 		var mat,
 			out,
 			d1,

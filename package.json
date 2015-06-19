@@ -37,7 +37,13 @@
     "error function",
     "erfinv",
     "mathematics",
-    "math"
+    "math",
+    "matrix",
+    "matrices",
+    "array",
+    "arrays",
+    "accessor",
+    "dstructs"
   ],
   "bugs": {
     "url": "https://github.com/compute-io/erfinv/issues"
@@ -45,7 +51,7 @@
   "dependencies": {
     "compute-polynomial": "^1.1.0",
     "compute-reverse": "^1.1.0",
-	"compute-array-constructors": "^1.0.0",
+		"compute-array-constructors": "^1.0.0",
     "dstructs-matrix": "^2.0.0",
     "utils-deep-get": "^1.0.0",
     "utils-deep-set": "^1.0.1",

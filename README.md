@@ -15,10 +15,11 @@ The [inverse error function](https://en.wikipedia.org/wiki/Error_function#Invers
 where `c_0 = 1` and 
 
 <div class="equation" align="center" data-raw-text="
-    c_k=\sum_{m=0}^{k-1}\frac{c_m c_{k-1-m}}{(m+1)(2m+1)} = \left\{1,1,\frac{7}{6},\frac{127}{90},\frac{4369}{2520},\frac{34807}{16200},\ldots\right\}." data-equation="eq:series_coefficients">
+    c_k=\sum_{m=0}^{k-1}\frac{c_m c_{k-1-m}}{(m+1)(2m+1)} = \left\{1,1,\frac{7}{6},\frac{127}{90},\frac{4369}{2520},\frac{34807}{16200},\ldots\right\}." data-equation="eq:inverse_error_function_series_coefficients">
 	<img src="https://cdn.rawgit.com/compute-io/erfinv/a7ceaad80daa4f15ee396a7ec360f17c7ee8a5f5/docs/img/eqn2.svg" alt="Equation of the coefficients.">
 	<br>
 </div>
+
 
 ## Installation
 
@@ -35,12 +36,9 @@ For use in the browser, use [browserify](https://github.com/substack/node-browse
 var erfinv = require( 'compute-erfinv' );
 ```
 
-
 #### erfinv( x[, options] )
 
-Evaluates the [inverse error function](https://en.wikipedia.org/wiki/Error_function#Inverse_functions).
-`x` may be either a [`number`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), an [`array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), a [`typed array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays), or a [`matrix`](https://github.com/dstructs/matrix).
-A value __must__ reside on the interval `[-1,1]`. For an input `array` and `matrix`, the `erf` function is evaluated for each value.
+Evaluates the [inverse error function](https://en.wikipedia.org/wiki/Error_function#Inverse_functions). `x` may be either a [`number`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), an [`array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), a [`typed array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays), or a [`matrix`](https://github.com/dstructs/matrix). All values __must__ reside on the interval `[-1,1]`.
 
 ``` javascript
 var matrix = require( 'dstructs-matrix' ),
@@ -75,7 +73,7 @@ mat = matrix( data, [2,2], 'float64' );
 
 out = erfinv( mat );
 /*
-	[  0    ~02253
+	[  0      ~0.2253
 	  ~0.4769 ~0.8134 ]
 */
 ```
@@ -88,7 +86,7 @@ The function accepts the following `options`:
 *	__path__: [deepget](https://github.com/kgryte/utils-deep-get)/[deepset](https://github.com/kgryte/utils-deep-set) key path.
 *	__sep__: [deepget](https://github.com/kgryte/utils-deep-get)/[deepset](https://github.com/kgryte/utils-deep-set) key path separator. Default: `'.'`.
 
-For object `arrays`, provide an accessor `function` for accessing `array` values.
+For non-numeric `arrays`, provide an accessor `function` for accessing `array` values.
 
 ``` javascript
 var data = [
@@ -103,13 +101,11 @@ function getValue( d, i ) {
 	return d[ 1 ];
 }
 
-var vals = erfinv( data, {
+var out = erfinv( data, {
 	'accessor': getValue
 });
 // returns [ 0, 0.17914, 0.47694, 0.90619, +infinity ]
 ```
-
-__Note__: the function returns an `array` with a length equal to the original input `array`.
 
 To [deepset](https://github.com/kgryte/utils-deep-set) an object `array`, provide a key path and, optionally, a key path separator.
 
@@ -172,7 +168,7 @@ var out = erfinv( data, {
 });
 // returns [ 0, 0.17914, 0.47694, 0.90619, +infinity ]
 
-bool = (arr === vals );
+bool = ( data === out );
 // returns true
 
 data = new Float64Array( 4 );
@@ -189,13 +185,14 @@ out = erfinv( mat, {
 	'copy': false
 });
 /*
-	[  0    ~02253
+	[  0      ~0.2253
 	  ~0.4769 ~0.8134 ]
 */
 
 bool = ( mat === out );
 // returns true
 ```
+
 
 ## Examples
 

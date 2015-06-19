@@ -55,7 +55,7 @@ describe( 'matrix erf', function tests() {
 		}
 	});
 
-	it( 'should evaluate the error function for each matrix element', function test() {
+	it( 'should evaluate the inverse error function for each matrix element', function test() {
 		var actual;
 
 		actual = matrix( [5,5], 'int16' );

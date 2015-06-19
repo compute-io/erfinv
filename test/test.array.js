@@ -75,7 +75,6 @@ describe( 'array erfinv', function tests() {
 		for ( i = 0; i < actual.length; i++ ) {
 			assert.closeTo( actual[ i ], expected[ i ], 1e-4, 'typed arrays' );
 		}
-
 	});
 
 	it( 'should return null if provided an empty array', function test() {

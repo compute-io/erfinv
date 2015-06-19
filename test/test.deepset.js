@@ -24,7 +24,7 @@ describe( 'deepset erfinv', function tests() {
 		expect( erfinv ).to.be.a( 'function' );
 	});
 
-	it( 'should compute the error function and deep set', function test() {
+	it( 'should compute the inverse error function and deep set', function test() {
 		var data, expected, i;
 
 		data = [
@@ -43,7 +43,8 @@ describe( 'deepset erfinv', function tests() {
 		];
 
 		data = erfinv( data, 'x' );
-		// evaluated on Wolfram Alpha and Octave
+
+		// Evaluated on Wolfram Alpha and Octave:
 		expected = [
 			{'x':0.225312},
 			{'x':-0.225312},
@@ -98,7 +99,6 @@ describe( 'deepset erfinv', function tests() {
 		for ( i = 0; i < data.length; i++ ) {
 			assert.closeTo( data[ i ].x[ 1 ], expected[ i ].x[ 1 ], 1e-4, 'custom separator' );
 		}
-
 	});
 
 	it( 'should return null if provided an empty array', function test() {

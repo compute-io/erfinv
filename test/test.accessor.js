@@ -7,7 +7,7 @@ var // Expectation library:
 	chai = require( 'chai' ),
 
 	// Module to be tested:
-	erf = require( './../lib/accessor.js' );
+	erfinv = require( './../lib/accessor.js' );
 
 
 // VARIABLES //
@@ -18,13 +18,13 @@ var expect = chai.expect,
 
 // TESTS //
 
-describe( 'accessor erf', function tests() {
+describe( 'accessor erfinv', function tests() {
 
 	it( 'should export a function', function test() {
-		expect( erf ).to.be.a( 'function' );
+		expect( erfinv ).to.be.a( 'function' );
 	});
 
-	it( 'should evaluate the error function using an accessor', function test() {
+	it( 'should evaluate the inverse error function using an accessor', function test() {
 		var data, actual, expected, i;
 
 		data = [
@@ -59,7 +59,7 @@ describe( 'accessor erf', function tests() {
 		];
 
 		actual = new Array( data.length );
-		actual = erf( actual, data, getValue );
+		actual = erfinv( actual, data, getValue );
 
 		for ( i = 0; i < actual.length; i++ ) {
 			assert.closeTo( actual[ i ], expected[ i ], 1e-4 );
@@ -70,7 +70,7 @@ describe( 'accessor erf', function tests() {
 	});
 
 	it( 'should return null if provided an empty array', function test() {
-		assert.isNull( erf( [], [], getValue ) );
+		assert.isNull( erfinv( [], [], getValue ) );
 		function getValue( d ) {
 			return d.x;
 		}
