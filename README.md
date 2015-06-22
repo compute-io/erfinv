@@ -38,7 +38,7 @@ var erfinv = require( 'compute-erfinv' );
 
 #### erfinv( x[, options] )
 
-Evaluates the [inverse error function](https://en.wikipedia.org/wiki/Error_function#Inverse_functions). `x` may be either a [`number`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), an [`array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), a [`typed array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays), or a [`matrix`](https://github.com/dstructs/matrix). All values __must__ reside on the interval `[-1,1]`.
+Evaluates the [inverse error function](https://en.wikipedia.org/wiki/Error_function#Inverse_functions). `x` may be either a [`number`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), an [`array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), a [`typed array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays), or a [`matrix`](https://github.com/dstructs/matrix). All numeric values __must__ reside on the interval `[-1,1]`.
 
 ``` javascript
 var matrix = require( 'dstructs-matrix' ),
@@ -67,8 +67,8 @@ for ( i = 0; i < 4; i++ ) {
 }
 mat = matrix( data, [2,2], 'float64' );
 /*
-	[  0    0.25
-	   0.5  0.75 ]
+	[ 0    0.25
+	  0.5  0.75 ]
 */
 
 out = erfinv( mat );
@@ -192,6 +192,63 @@ out = erfinv( mat, {
 bool = ( mat === out );
 // returns true
 ```
+
+
+## Notes
+
+*	If an element is __not__ a numeric value, the evaluated [inverse error function](https://en.wikipedia.org/wiki/Error_function#Inverse_functions) is `NaN`.
+
+	``` javascript
+	var data, out;
+
+	out = erfinv( null );
+	// returns NaN
+
+	out = erfinv( true );
+	// returns NaN
+
+	out = erfinv( {'a':'b'} );
+	// returns NaN
+
+	out = erfinv( [ true, null, [] ] );
+	// returns [ NaN, NaN, NaN ]
+
+	function getValue( d, i ) {
+		return d.x;
+	}
+	data = [
+		{'x':true},
+		{'x':[]},
+		{'x':{}},
+		{'x':null}
+	];
+
+	out = erfinv( data, {
+		'accessor': getValue
+	});
+	// returns [ NaN, NaN, NaN, NaN ]
+
+	out = erfinv( data, {
+		'path': 'x'
+	});
+	/*
+		[
+			{'x':NaN},
+			{'x':NaN},
+			{'x':NaN,
+			{'x':NaN}
+		]
+	*/
+	```
+
+*	Be careful when providing a data structure which contains non-numeric elements and specifying an `integer` output data type, as `NaN` values are cast to `0`.
+
+	``` javascript
+	var out = erfinv( [ true, null, [] ], {
+		'dtype': 'int8'
+	});
+	// returns Int8Array( [0,0,0] );
+	```
 
 
 ## Examples

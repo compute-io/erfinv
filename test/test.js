@@ -9,6 +9,9 @@ var // Expectation library:
 	// Matrix data structure:
 	matrix = require( 'dstructs-matrix' ),
 
+	// Validate if a value is NaN:
+	isnan = require( 'validate.io-nan' ),
+
 	// Module to be tested:
 	erfinv = require( './../lib' ),
 
@@ -28,27 +31,6 @@ describe( 'compute-erfinv', function tests() {
 
 	it( 'should export a function', function test() {
 		expect( erfinv ).to.be.a( 'function' );
-	});
-
-	it( 'should throw an error if the first argument is neither a number or array-like or matrix-like', function test() {
-		var values = [
-			// '5', // valid as is array-like (length)
-			true,
-			undefined,
-			null,
-			NaN,
-			function(){},
-			{}
-		];
-
-		for ( var i = 0; i < values.length; i++ ) {
-			expect( badValue( values[i] ) ).to.throw( TypeError );
-		}
-		function badValue( value ) {
-			return function() {
-				erfinv( value );
-			};
-		}
 	});
 
 	it( 'should throw an error if provided an invalid option', function test() {
@@ -108,6 +90,22 @@ describe( 'compute-erfinv', function tests() {
 					'dtype': value
 				});
 			};
+		}
+	});
+
+	it( 'should return NaN if the first argument is neither a number, array-like, or matrix-like', function test() {
+		var values = [
+			// '5', // valid as is array-like (length)
+			true,
+			undefined,
+			null,
+			// NaN, // allowed
+			function(){},
+			{}
+		];
+
+		for ( var i = 0; i < values.length; i++ ) {
+			assert.isTrue( isnan( erfinv( values[ i ] ) ) );
 		}
 	});
 
@@ -422,10 +420,10 @@ describe( 'compute-erfinv', function tests() {
 		assert.deepEqual( out.data, d2 );
 	});
 
-	it( 'should return `null` if provided an empty data structure', function test() {
-		assert.isNull( erfinv( [] ) );
-		assert.isNull( erfinv( matrix( [0,0] ) ) );
-		assert.isNull( erfinv( new Int8Array() ) );
+	it( 'should return an empty data structure if provided an empty data structure', function test() {
+		assert.deepEqual( erfinv( [] ), [] );
+		assert.deepEqual( erfinv( matrix( [0,0] ) ).data, new Float64Array() );
+		assert.deepEqual( erfinv( new Int8Array() ), new Float64Array() );
 	});
 
 });

@@ -77,9 +77,21 @@ describe( 'array erfinv', function tests() {
 		}
 	});
 
-	it( 'should return null if provided an empty array', function test() {
-		assert.isNull( erfinv( [], [] ) );
-		assert.isNull( erfinv( new Int8Array(), new Int8Array() ) );
+	it( 'should return an empty array if provided an empty array', function test() {
+		assert.deepEqual( erfinv( [], [] ), [] );
+		assert.deepEqual( erfinv( new Int8Array(), new Int8Array() ), new Int8Array() );
+	});
+
+	it( 'should handle non-numeric values by setting the element to NaN', function test() {
+		var data, actual, expected;
+
+		data = [ true, null, [], {} ];
+		actual = new Array( data.length );
+		actual = erfinv( actual, data );
+
+		expected = [ NaN, NaN, NaN, NaN ];
+
+		assert.deepEqual( actual, expected );
 	});
 
 });
