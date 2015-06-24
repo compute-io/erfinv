@@ -75,6 +75,24 @@ describe( 'compute-erfinv', function tests() {
 		}
 	});
 
+	it( 'should throw an error if provided a typed-array and an unrecognized/unsupported data type option', function test() {
+		var values = [
+			'beep',
+			'boop'
+		];
+
+		for ( var i = 0; i < values.length; i++ ) {
+			expect( badValue( values[i] ) ).to.throw( Error );
+		}
+		function badValue( value ) {
+			return function() {
+				erfinv( new Int8Array([1,2,3]), {
+					'dtype': value
+				});
+			};
+		}
+	});
+
 	it( 'should throw an error if provided a matrix and an unrecognized/unsupported data type option', function test() {
 		var values = [
 			'beep',
@@ -112,6 +130,8 @@ describe( 'compute-erfinv', function tests() {
 	it( 'should compute the inverse error function when provided a number', function test() {
 		assert.strictEqual( erfinv( 0 ), 0 );
 		assert.closeTo( erfinv( 0.5 ), 0.4769, 1e-4 );
+
+		assert.isTrue( isnan( erfinv( NaN ) ) );
 	});
 
 	it( 'should evaluate the inverse error function when provided a plain array', function test() {
@@ -169,7 +189,7 @@ describe( 'compute-erfinv', function tests() {
 	it( 'should evaluate the inverse error function when provided a typed array', function test() {
 		var data, actual, expected, i;
 
-		data = new Float64Array( [
+		data = new Float64Array([
 			0.25,
 			-0.25,
 			0.6,
