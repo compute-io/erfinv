@@ -117,7 +117,7 @@ describe( 'compute-erfinv', function tests() {
 			true,
 			undefined,
 			null,
-			// NaN, // allowed
+			NaN,
 			function(){},
 			{}
 		];

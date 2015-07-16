@@ -24,7 +24,7 @@ var expect = chai.expect,
 
 // TESTS //
 
-describe( 'matrix erf', function tests() {
+describe( 'matrix erfinv', function tests() {
 
 	var out,
 		mat,
