@@ -12,7 +12,7 @@ var // Expectation library:
 	// Module to be tested:
 	erfinv = require( './../lib/matrix.js' ),
 
-	// Error function:
+	// Inverse error function:
 	ERFINV = require( './../lib/number.js' );
 
 
@@ -24,7 +24,7 @@ var expect = chai.expect,
 
 // TESTS //
 
-describe( 'matrix erf', function tests() {
+describe( 'matrix erfinv', function tests() {
 
 	var out,
 		mat,
@@ -64,19 +64,20 @@ describe( 'matrix erf', function tests() {
 		assert.deepEqual( actual.data, out.data );
 	});
 
-	it( 'should return null if provided an empty matrix', function test() {
-		var out, mat;
+	it( 'should return an empty matrix if provided an empty matrix', function test() {
+		var out, mat, expected;
 
 		out = matrix( [0,0] );
+		expected = matrix( [0,0] ).data;
 
 		mat = matrix( [0,10] );
-		assert.isNull( erfinv( out, mat ) );
+		assert.deepEqual( erfinv( out, mat ).data, expected );
 
 		mat = matrix( [10,0] );
-		assert.isNull( erfinv( out, mat ) );
+		assert.deepEqual( erfinv( out, mat ).data, expected );
 
 		mat = matrix( [0,0] );
-		assert.isNull( erfinv( out, mat ) );
+		assert.deepEqual( erfinv( out, mat ).data, expected );
 	});
 
 });
